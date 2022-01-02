@@ -89,7 +89,7 @@ final class ThrottlerTests: XCTestCase {
         for i in 0...1000 {
             // note: shouldStartImmediately is true by default.
             Throttler.throttle(id: "throttle-test4",
-                               delay:.seconds(3),
+                               delay: .seconds(3),
                                queue: .global()) {
                 sum += 1
             }
@@ -101,7 +101,7 @@ final class ThrottlerTests: XCTestCase {
         waitForExpectations(timeout: interval)
         XCTAssertNotEqual(sum, 1001)
 
-        //-------------------------------------------------------//
+        // -------------------------------------------------------//
 
         var sum2 = 0
         Throttler.throttle(id: "throttle-test5",
@@ -110,7 +110,7 @@ final class ThrottlerTests: XCTestCase {
         }
         XCTAssertEqual(sum2, 0)
 
-        //-------------------------------------------------------//
+        // -------------------------------------------------------//
 
         // shouldRunImmediately is true by default.
         var sum22 = 0
@@ -119,7 +119,7 @@ final class ThrottlerTests: XCTestCase {
         }
         XCTAssertEqual(sum22, 1)
 
-        //-------------------------------------------------------//
+        // -------------------------------------------------------//
 
         let exp3 = expectation(description: "exp3")
         var sum3 = 0
@@ -137,7 +137,7 @@ final class ThrottlerTests: XCTestCase {
         waitForExpectations(timeout: interval)
         XCTAssertEqual(sum3, 10)
 
-        //-------------------------------------------------------//
+        // -------------------------------------------------------//
 
         let exp4 = expectation(description: "exp4")
         let count4 = 10000
