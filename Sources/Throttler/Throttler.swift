@@ -6,7 +6,7 @@
 import Foundation
 import Combine
 
-/// struct either throttling or debouncing successive works with provided options.
+/// A `Throttler` provides an interface that allows throttling successive work with a few options.
 @available(iOS 13.0, *)
 public enum Throttler {
 
