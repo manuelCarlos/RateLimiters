@@ -3,52 +3,63 @@
 //  Throttler
 //
 
-import Foundation
-import Combine
+public actor Throttler {
 
-/// A `Throttler` provides an interface that allows throttling successive work with a few options.
-@available(iOS 13.0, *)
-public enum Throttler {
+    private var firstTask: Task<Void, Error>?
+    private var latestTask: Task<Void, Error>?
 
-    private typealias Identifier = String
-    private typealias Work = () -> Void
-    private typealias Subject = PassthroughSubject<Work, Never>
-    private typealias Bag = Set<AnyCancellable>
+    private let duration: Double
+    private let latest: Bool
 
-    private static var subjects: [Identifier: Subject] = [:]
-    private static var bags: [Identifier: Bag] = [:]
-
-    /// Execute work in the specified time interval.
-    ///
+    /// Create a `Throttler` instance with the given parameters.
     /// - Parameters:
-    ///   - id: the identifier to group works to throttle. `Stream` must have an equivalent identifier for each work to throttle.
-    ///   - delay: The time interval at which to delay executing the work, expressed in `DispatchQueue.SchedulerTimeType.Stride`.
-    ///   - shouldRunImmediately: A boolean type where `true` will run the first work immediately regardless of the delay.
-    ///   - shouldRunLatest: A Boolean value that indicates whether to publish the most recent element. If `false`, the publisher emits the first element received during the interval.
-    ///   - queue: a queue to execute the work on. The default is `DispatchQueue.main`.
-    ///   - work: an escaping closure with the work to execute.
-    public static func throttle(id identifier: String,
-                                delay: DispatchQueue.SchedulerTimeType.Stride = .seconds(1),
-                                shouldRunImmediately: Bool = true,
-                                shouldRunLatest: Bool = true,
-                                queue: DispatchQueue = DispatchQueue.main,
-                                execute work: @escaping () -> Void) {
-        let isFirstRun = subjects[identifier] == nil
-        if shouldRunImmediately && isFirstRun {
-            work()
+    ///   - duration: the duration in seconds used to throttle the work.
+    ///   - latest: when `true`, the last work submitted will be executed, otherwise only the first
+    ///   task is executed.
+    public init(duration: Double, latest: Bool) {
+        self.duration = duration
+        self.latest = latest
+    }
+
+    /// Submit work to be executed.
+    /// - Parameter operation: a closure containing the work to be executed.
+    public func submit(operation: @escaping () async -> Void) {
+        throttle(operation: operation)
+    }
+
+    // MARK: - Private
+
+    private func throttle(operation: @escaping () async -> Void) {
+        guard firstTask == nil else {
+
+            if latest {
+                latestTask?.cancel()
+
+                latestTask = Task {
+                    try await sleep()
+                    await operation()
+                    latestTask = nil
+                }
+            }
+            return
         }
 
-        if let subject = subjects[identifier] {
-            subject.send(work)
-        } else {
-            subjects[identifier] = PassthroughSubject<Work, Never>()
-            bags[identifier] = Bag()
-
-            subjects[identifier]!
-                .throttle(for: delay, scheduler: queue, latest: shouldRunLatest)
-                .sink(receiveValue: { $0() })
-                .store(in: &bags[identifier]!)
+        if latest {
+            latestTask?.cancel()
         }
+
+        firstTask = Task {
+            try? await sleep()
+            firstTask = nil
+        }
+
+        Task {
+            await operation()
+        }
+    }
+
+    private func sleep() async throws {
+        try await Task.sleep(until: .now + .seconds(duration), clock: .suspending)
     }
 
 }

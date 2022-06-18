@@ -1,13 +1,16 @@
 //
-//  ThrottlerTests.swift
+//  ThrottlerOnMainActorTests.swift
 //  ThrottlerTests
 //
+
+import Foundation
 
 import XCTest
 
 @testable import Throttler
 
-final class ThrottlerTests: XCTestCase {
+@MainActor
+final class ThrottlerOnMainActorTests: XCTestCase {
 
     // MARK: - Should Not Run The Last Work
 
@@ -49,8 +52,6 @@ final class ThrottlerTests: XCTestCase {
         await sendToServer("f")
         await sendToServer("g")
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
-
         wait(for: [exp], timeout: 10)
     }
 
@@ -91,8 +92,6 @@ final class ThrottlerTests: XCTestCase {
 
         await sendToServer("f")
         await sendToServer("g")
-
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
 
         wait(for: [exp], timeout: 10)
     }
@@ -184,7 +183,7 @@ final class ThrottlerTests: XCTestCase {
 
         await sendToServer("f")
         await sendToServer("g")
-        
+
         try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
 
         wait(for: [exp], timeout: 10)

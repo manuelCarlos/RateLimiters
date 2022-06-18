@@ -3,11 +3,14 @@
 
 import PackageDescription
 
-let package = Package(name: "Throttler",
-
+let package = Package(name: "RateLimiters",
+                      platforms: [
+                        .iOS("16.0")
+                      ],
                       // Products define the executables and libraries produced by a package, and make them visible to other packages.
                       products: [
-                        .library(name: "Throttler", targets: ["Throttler"])
+                        .library(name: "Throttler", targets: ["Throttler"]),
+                        .library(name: "Debouncer", targets: ["Debouncer"])
                       ],
 
                       // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -15,7 +18,10 @@ let package = Package(name: "Throttler",
                       // MARK: - Public API
                       targets: [
                         .target(name: "Throttler"),
-                        .testTarget(name: "ThrottlerTests", dependencies: ["Throttler"])
+                        .target(name: "Debouncer"),
+
+                        .testTarget(name: "ThrottlerTests", dependencies: ["Throttler"]),
+                        .testTarget(name: "DebouncerTests", dependencies: ["Debouncer"])
                       ],
                       swiftLanguageVersions: [
                         .v5
