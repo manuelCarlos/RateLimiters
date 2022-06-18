@@ -13,19 +13,12 @@ let package = Package(name: "RateLimiters",
                         .library(name: "Debouncer", targets: ["Debouncer"])
                       ],
 
-                      dependencies: [
-                        .package(url: "https://github.com/apple/swift-async-algorithms.git", .branch("main"))
-                      ],
-
                       // Targets are the basic building blocks of a package. A target can define a module or a test suite.
                       // Targets can depend on other targets in this package, and on products in packages which this package depends on.
                       // MARK: - Public API
                       targets: [
-                        .target(name: "Throttler",
-                                dependencies: [.product(name: "AsyncAlgorithms", package: "swift-async-algorithms")]),
-
-                        .target(name: "Debouncer",
-                                dependencies: [.product(name: "AsyncAlgorithms", package: "swift-async-algorithms")]),
+                        .target(name: "Throttler"),
+                        .target(name: "Debouncer"),
 
                         .testTarget(name: "ThrottlerTests", dependencies: ["Throttler"]),
                         .testTarget(name: "DebouncerTests", dependencies: ["Debouncer"])
