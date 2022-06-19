@@ -18,7 +18,7 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 2
 
-        let throttler = Throttler(duration: 1, latest: false)
+        let throttler = Throttler(duration: .seconds(1), latest: false, clock: .suspending)
 
         var value = ""
         var fulfilmentCount = 0
@@ -59,7 +59,7 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 2
 
-        let throttler = Throttler(duration: 1, latest: false)
+        let throttler = Throttler(duration: .seconds(1), latest: false, clock: .suspending)
 
         var value = ""
         var fulfilmentCount = 0
@@ -102,7 +102,7 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 3
 
-        let throttler = Throttler(duration: 2, latest: true)
+        let throttler = Throttler(duration: .seconds(2), latest: true, clock: .suspending)
 
         var value = ""
         var fulfilmentCount = 0
@@ -146,7 +146,7 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         let exp = expectation(description: "Ensure task fired")
         exp.expectedFulfillmentCount = 4
 
-        let throttler = Throttler(duration: 2, latest: true)
+        let throttler = Throttler(duration: .seconds(2), latest: true, clock: .suspending)
 
         var value = ""
         var fulfilmentCount = 0

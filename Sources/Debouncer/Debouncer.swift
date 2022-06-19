@@ -15,8 +15,8 @@ public actor Debouncer <C: Clock> {
     /// - Parameters:
     ///   - duration: the duration of time interval used to debounce the work.
     ///   - tolerance: optional tolerance to be applied to the given quiescence period. Default is `nil`.
-    ///   - clock: a clock that measures the duration of the time interval. Default is `Clock.suspending`.
-    public init(duration: C.Instant.Duration, tolerance: C.Instant.Duration? = nil, clock: C = .suspending) {
+    ///   - clock: a clock that measures the duration of the time interval.
+    public init(duration: C.Instant.Duration, tolerance: C.Instant.Duration? = nil, clock: C) {
         self.duration = duration
         self.tolerance = tolerance
         self.clock = clock
