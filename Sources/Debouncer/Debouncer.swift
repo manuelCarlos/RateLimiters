@@ -4,28 +4,39 @@
 //
 
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
-public actor Debouncer {
+public actor Debouncer <C: Clock> {
 
-    private let duration: Double
     private var task: Task<Void, Error>?
+    private let duration: C.Instant.Duration
+    private let tolerance: C.Instant.Duration?
+    private let clock: C
 
-    /// Create a `Debouncer` instance with the given parameter.
-    /// - Parameter duration: the time interval in seconds used to debounce the work.
-    public init(duration: Double) {
+    /// Create a `Debouncer` instance with the given parameters.
+    /// - Parameters:
+    ///   - duration: the duration of time interval used to debounce the work.
+    ///   - tolerance: optional tolerance to be applied to the given quiescence period. Default is `nil`.
+    ///   - clock: a clock that measures the duration of the time interval. Default is `Clock.suspending`.
+    public init(duration: C.Instant.Duration, tolerance: C.Instant.Duration? = nil, clock: C = .suspending) {
         self.duration = duration
+        self.tolerance = tolerance
+        self.clock = clock
     }
 
+    /// Submits work to be executed.
+    /// If a given quiescence duration has elapsed where no work as been submitted, then the last submitted operation is executed.
+    ///
+    /// - Parameter operation: as escaping closure with the work to be executed.
     public func submit(operation: @escaping () async -> Void) {
-        debounce(operation: operation)
+        debounce(operation)
     }
 
     // MARK: - Private
 
-    private func debounce(operation: @escaping () async -> Void) {
+    private func debounce(_ operation: @escaping () async -> Void) {
         task?.cancel()
 
         task = Task {
-            try await Task.sleep(until: .now + .seconds(duration), clock: .suspending)
+            try await Task.sleep(until: clock.now.advanced(by: duration), tolerance: tolerance, clock: clock)
             await operation()
             task = nil
         }

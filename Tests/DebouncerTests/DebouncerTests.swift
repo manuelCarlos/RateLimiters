@@ -13,7 +13,7 @@ final class DebouncerTests: XCTestCase {
         let exp = expectation(description: "Ensure last task fired")
         exp.expectedFulfillmentCount = 2
 
-        let debouncer = Debouncer(duration: 1)
+        let debouncer = Debouncer(duration: .seconds(1), clock: .suspending)
 
         var value = ""
         var fulfilmentCount = 0
@@ -54,7 +54,9 @@ final class DebouncerTests: XCTestCase {
 
     func test_debouncer_after_duration() async throws {
         let exp = expectation(description: "Ensure debounce after duration")
-        let debouncer = Debouncer(duration: 1)
+        exp.expectedFulfillmentCount = 3
+
+        let debouncer = Debouncer(duration: .seconds(1), clock: .suspending)
 
         var end = Date.now + 1
         exp.expectedFulfillmentCount = 2
