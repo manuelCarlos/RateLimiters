@@ -1,10 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?color=ff69b4)](https://github.com/manuelCarlos/RateLimiters/blob/master/LICENSE)
 
-[![release](https://img.shields.io/github/release/manuelCarlos/RateLimiters.svg)](https://github.com/manuelCarlos/RateLimiters/releases/latest)
-
 # RateLimiters
 
-### This package contains two target:
+### This package contains two products:
 
   - `Throttler` - is a Swift actor that allows the clients to submit work that will only be executed at most once during a given window of time.
   
@@ -42,18 +40,27 @@ func some(operation: @escaping () async -> Void) async {
 
 ### Installation
 
-#### Adding `RateLimiters` as a Dependency using SPM.
+#### Adding any of the `RateLimiters` modules as a Dependency using SPM.
 
 To use these objects in a SwiftPM project, add the following line to the dependencies in your `Package.swift` file:
 
 ```
-.package(url: "https://github.com/manuelCarlos/RateLimiters.git"),
+.package(url: "https://github.com/manuelCarlos/RateLimiters.git")
 ```
 
-To include only `Throttler` as a dependency for your executable target:
+##### To include only `Throttler` as a dependency for your executable target:
 
 ```
 .target(name: "<target>", dependencies: [
-        .product(name: "Throttler",   package: "RateLimiters"),
+        .product(name: "Throttler", package: "RateLimiters")
+]),
+```
+
+
+##### To include only `Debouncer` as a dependency for your executable target:
+
+```
+.target(name: "<target>", dependencies: [
+        .product(name: "Debouncer", package: "RateLimiters")
 ]),
 ```
