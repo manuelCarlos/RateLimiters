@@ -1,4 +1,6 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?color=ff69b4)](https://github.com/manuelCarlos/Easing/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?color=ff69b4)](https://github.com/manuelCarlos/RateLimiters/blob/master/LICENSE)
+
+[![release](https://img.shields.io/github/release/manuelCarlos/RateLimiters.svg)](https://github.com/manuelCarlos/RateLimiters/releases/latest)
 
 # RateLimiters
 
@@ -8,6 +10,50 @@
   
   - `Debouncer` - is a Swift actor that allows clients to submit work that will only be executed if/when no submissions are done during a specified time interval.
 
-### Usage: (tbd)
+### Throttler Usage:
 
-### Installation: (tbd)
+```swift
+
+import Throttler
+
+let throttler = Throttler(duration: .seconds(2), latest: false, clock: .suspending)
+  
+func some(operation: @escaping () async -> Void) async {
+    // The operations submitted here will be throttled by 2 secs.
+    await throttler.submit(operation: operation)
+}
+ 
+```
+
+### Debouncer Usage:
+
+```swift
+
+import Debouncer
+
+let debouncer = Debouncer(duration: .seconds(2), clock: .suspending)
+  
+func some(operation: @escaping () async -> Void) async {
+    // The operations submitted here will be debounced by 2 secs.
+    await debouncer.submit(operation: operation)
+}
+ 
+```
+
+### Installation
+
+#### Adding `RateLimiters` as a Dependency using SPM.
+
+To use these objects in a SwiftPM project, add the following line to the dependencies in your `Package.swift` file:
+
+```
+.package(url: "https://github.com/manuelCarlos/RateLimiters.git"),
+```
+
+To include only `Throttler` as a dependency for your executable target:
+
+```
+.target(name: "<target>", dependencies: [
+        .product(name: "Throttler",   package: "RateLimiters"),
+]),
+```
