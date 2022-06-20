@@ -184,7 +184,7 @@ final class ThrottlerTests: XCTestCase {
 
         await sendToServer("f")
         await sendToServer("g")
-        
+
         try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
 
         wait(for: [exp], timeout: 10)
