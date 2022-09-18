@@ -2,7 +2,7 @@
 
 # RateLimiters
 
-## Swift implementation of Throttling and Debounce actors.
+## Swift implementation of Throttling and Debouncing actors.
 
 ### This package contains two user-facing modules:
 
