@@ -2,7 +2,9 @@
 
 # RateLimiters
 
-### This package contains two products:
+## Swift implementation of Throttling and Debounce actors.
+
+### This package contains two user-facing modules:
 
   - `Throttler` - is a Swift actor that allows the clients to submit work that will only be executed at most once during a given window of time.
   
