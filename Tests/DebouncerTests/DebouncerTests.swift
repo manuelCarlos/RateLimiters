@@ -9,17 +9,24 @@ import XCTest
 
 final class DebouncerTests: XCTestCase {
 
+    private var value = ""
+    private var fulfilmentCount = 0
+
+    override func tearDown() async throws {
+        try await super.tearDown()
+
+        value = ""
+        fulfilmentCount = 0
+    }
+
     func test_debouncer() async throws {
         let exp = expectation(description: "Ensure last task fired")
         exp.expectedFulfillmentCount = 2
 
         let debouncer = Debouncer(duration: .seconds(1), clock: .suspending)
 
-        var value = ""
-        var fulfilmentCount = 0
-
         func sendToServer(_ input: String) async {
-            await debouncer.submit {
+            await debouncer.submit { [self] in
                 value += input
 
                 switch fulfilmentCount {
@@ -42,14 +49,14 @@ final class DebouncerTests: XCTestCase {
         await sendToServer("d")
         await sendToServer("e")
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(2), clock: .suspending)
 
         await sendToServer("f")
         await sendToServer("g")
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(2), clock: .suspending)
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
     func test_debouncer_after_duration() async throws {
@@ -72,16 +79,16 @@ final class DebouncerTests: XCTestCase {
         await debouncer.submit(operation: test)
         await debouncer.submit(operation: test)
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(2), clock: .suspending)
         end = .now + 1
 
         await debouncer.submit(operation: test)
         await debouncer.submit(operation: test)
         await debouncer.submit(operation: test)
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(2), clock: .suspending)
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
 }
