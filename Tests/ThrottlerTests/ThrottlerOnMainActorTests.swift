@@ -9,22 +9,29 @@ import XCTest
 
 @testable import Throttler
 
-@MainActor
 final class ThrottlerOnMainActorTests: XCTestCase {
+
+    private var value = ""
+    private var fulfilmentCount = 0
+
+    override func tearDown() async throws {
+        try await super.tearDown()
+
+        value = ""
+        fulfilmentCount = 0
+    }
 
     // MARK: - Should Not Run The Last Work
 
+    @MainActor
     func test_should_not_run_latest() async {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 2
 
         let throttler = Throttler(duration: .seconds(1), latest: false, clock: .suspending)
 
-        var value = ""
-        var fulfilmentCount = 0
-
         func sendToServer(_ input: String) async {
-            await throttler.submit {
+            await throttler.submit { [self] in
                 value += input
 
                 switch fulfilmentCount {
@@ -47,25 +54,23 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         await sendToServer("d")
         await sendToServer("e")
 
-        try? await Task.sleep(until: .now +  .seconds(2), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(2), clock: .suspending)
 
         await sendToServer("f")
         await sendToServer("g")
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
+    @MainActor
     func test_should_not_run_latest_multiple_times() async {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 2
 
         let throttler = Throttler(duration: .seconds(1), latest: false, clock: .suspending)
 
-        var value = ""
-        var fulfilmentCount = 0
-
         func sendToServer(_ input: String) async {
-            await throttler.submit {
+            await throttler.submit { [self] in
                 value += input
 
                 switch fulfilmentCount {
@@ -88,27 +93,25 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         await sendToServer("d")
         await sendToServer("e")
 
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(3), clock: .suspending)
 
         await sendToServer("f")
         await sendToServer("g")
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
     // MARK: - Should Run The Last Work
 
+    @MainActor
     func test_should_run_first_and_latest_once() async {
         let exp = expectation(description: "Ensure first task fired")
         exp.expectedFulfillmentCount = 3
 
         let throttler = Throttler(duration: .seconds(2), latest: true, clock: .suspending)
 
-        var value = ""
-        var fulfilmentCount = 0
-
         func sendToServer(_ input: String) async {
-            await throttler.submit {
+            await throttler.submit { [self] in
                 value += input
 
                 switch fulfilmentCount {
@@ -119,7 +122,7 @@ final class ThrottlerOnMainActorTests: XCTestCase {
                 case 2:
                     XCTAssertEqual(value, "aef")
                 default:
-                   XCTFail()
+                    XCTFail()
                 }
 
                 exp.fulfill()
@@ -133,26 +136,24 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         await sendToServer("d")
         await sendToServer("e")
 
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(3), clock: .suspending)
 
         await sendToServer("f")
 
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(3), clock: .suspending)
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
+    @MainActor
     func test_should_run_first_and_latest_multiple_times() async {
         let exp = expectation(description: "Ensure task fired")
         exp.expectedFulfillmentCount = 4
 
         let throttler = Throttler(duration: .seconds(2), latest: true, clock: .suspending)
 
-        var value = ""
-        var fulfilmentCount = 0
-
         func sendToServer(_ input: String) async {
-            await throttler.submit {
+            await throttler.submit { [self] in
                 value += input
 
                 switch fulfilmentCount {
@@ -179,14 +180,14 @@ final class ThrottlerOnMainActorTests: XCTestCase {
         await sendToServer("d")
         await sendToServer("e")
 
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(3), clock: .suspending)
 
         await sendToServer("f")
         await sendToServer("g")
 
-        try? await Task.sleep(until: .now +  .seconds(3), clock: .suspending)
+        try? await Task.sleep(until: .now + .seconds(3), clock: .suspending)
 
-        wait(for: [exp], timeout: 10)
+        await fulfillment(of: [exp], timeout: 10)
     }
 
 }
