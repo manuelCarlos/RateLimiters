@@ -2,6 +2,29 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+   .enableUpcomingFeature("BareSlashRegexLiterals"),
+   .enableUpcomingFeature("ConciseMagicFile"),
+   .enableUpcomingFeature("ExistentialAny"),
+   .enableUpcomingFeature("ForwardTrailingClosures"),
+   .enableUpcomingFeature("ImplicitOpenExistentials"),
+   .enableUpcomingFeature("StrictConcurrency"),
+   .enableUpcomingFeature("ImportObjcForwardDeclarations"),
+   .enableUpcomingFeature("DisableOutwardActorInference"),
+   .enableUpcomingFeature("InternalImportsByDefault"),
+   .enableUpcomingFeature("IsolatedDefaultValues"),
+   .enableUpcomingFeature("GlobalConcurrency"),
+   .enableExperimentalFeature("StrictConcurrency"),
+   .unsafeFlags([
+    "-warn-concurrency",
+    "-enable-actor-data-race-checks",
+    "-Xfrontend",
+    "-warn-long-function-bodies=50",
+    "-Xfrontend",
+    "-warn-long-expression-type-checking=50"
+   ])
+]
+
 let package = Package(name: "RateLimiters",
 
                       products: [
@@ -11,10 +34,12 @@ let package = Package(name: "RateLimiters",
 
                       targets: [
                         .target(name: "Throttler",
-                                resources: [.process("PrivacyInfo.xcprivacy")]
+                                resources: [.process("PrivacyInfo.xcprivacy")],
+                                swiftSettings: swiftSettings
                                ),
                         .target(name: "Debouncer",
-                                resources: [.process("PrivacyInfo.xcprivacy")]
+                                resources: [.process("PrivacyInfo.xcprivacy")],
+                                swiftSettings: swiftSettings
                                ),
 
                         .testTarget(name: "ThrottlerTests", dependencies: ["Throttler"]),
