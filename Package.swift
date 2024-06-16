@@ -21,7 +21,7 @@ let swiftSettings: [SwiftSetting] = [
     "-Xfrontend",
     "-warn-long-function-bodies=50",
     "-Xfrontend",
-    "-warn-long-expression-type-checking=50"
+    "-warn-long-expression-type-checking=100"
    ])
 ]
 
