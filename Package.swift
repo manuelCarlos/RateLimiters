@@ -3,7 +3,6 @@
 import PackageDescription
 
 let package = Package(name: "RateLimiters",
-
                       products: [
                         .library(name: "Throttler", targets: ["Throttler"]),
                         .library(name: "Debouncer", targets: ["Debouncer"])
