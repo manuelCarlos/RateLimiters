@@ -1,13 +1,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?color=ff69b4)](https://github.com/manuelCarlos/RateLimiters/blob/master/LICENSE)
 
-
 ![Static Badge](https://img.shields.io/badge/iOS-_v16.0_-blue)
 ![Static Badge](https://img.shields.io/badge/macOS-_v13.0_-red)
 ![Static Badge](https://img.shields.io/badge/watchOS-_v9.0_-green)
 ![Static Badge](https://img.shields.io/badge/tvOS-_v16.0_-pink)
-
-
-
 
 
 # RateLimiters
